@@ -128,15 +128,46 @@
    - Volver a ajustar los bulones/abrazadera
    - Verificar que no haya fugas audibles en ralenti
 
-## Paso 10: Diagnostico Alternativo (solo si falla test de escape)
+## Paso 10: Verificacion de Calibracion PCM (si escape no da resultado)
 
-Si la prueba del escape NO muestra mejora, las siguientes verificaciones son:
+**Contexto:** La PCM fue reparada y se elimino el PATS despues de un cortocircuito en la BJB. La flash fue reprogramada, lo que pudo alterar los mapas de calibracion del motor.
+
+### 10.1 Verificacion por scanner (gratis)
+- [ ] Leer "Cantidad de inyeccion deseada" vs "Cantidad de inyeccion real" (mg/inj) a fondo en 3ra
+- [ ] Leer "Presion de rail deseada" vs "Presion de rail real" a fondo
+- [ ] Verificar "Posicion del acelerador" llegue a 100% a fondo
+- [ ] Leer "Limitador de humo" (mg/inj) — si es bajo, esta capando combustible
+
+### 10.2 Lectura de la flash del PCM
+- [ ] Conseguir herramienta MPPS v18/v21 (~$50-80 USD, MercadoLibre/AliExpress)
+- [ ] Conectar MPPS al OBD2 (contacto ON, motor apagado)
+- [ ] Leer flash completa — guardar 3 copias de backup
+- [ ] Leer segunda vez y comparar que sea identica (verificacion de integridad)
+- [ ] Abrir en WinOLS / ECM Titanium con damos SID 901
+
+### 10.3 Analisis de mapas
+- [ ] Verificar numero de calibracion vs original Ranger 2008 3.0L
+- [ ] Revisar mapa Injection Quantity (IQ) — valores maximos
+- [ ] Revisar mapa Rail Pressure Target — presiones objetivo
+- [ ] Revisar Torque Limiter — tope de torque
+- [ ] Revisar Smoke Limiter — limite anti-humo
+- [ ] Revisar Speed Limiter
+- [ ] Revisar Driver Wish / Pedal Map — respuesta al acelerador
+
+### 10.4 Correccion
+- [ ] Si calibracion es incorrecta: flashear firmware original correcto
+- [ ] Si calibracion es correcta: verificar retorno de inyectores, T-MAP, TPS/APP
+
+**Nota:** Siempre verificar checksum antes de escribir. Los clones MPPS no corrigen checksum automaticamente — usar plugin de WinOLS/ECM Titanium.
+
+## Paso 11: Diagnostico Alternativo (solo si escape Y PCM estan OK)
+
+Si ninguna de las dos sospechas principales se confirma:
 
 - [ ] Medir retorno individual de inyectores (Paso 4 completo)
 - [ ] Verificar cableado del T-MAP con multimetro (5V referencia, senal en ralenti y acelerando)
-- [ ] Verificar presion de rail NOMINAL vs REAL en scanner (si la real esta por debajo de la nominal, hay fuga/restriccion)
-- [ ] Verificar que el sensor de posicion del acelerador (TPS/APP) llegue a 100% a fondo
-- [ ] Considerar reprogramacion/actualizacion del PCM
+- [ ] Verificar que el sensor de posicion del acelerador (TPS/APP) llegue a 100%
+- [ ] Verificar estado del turbo internamente (juego axial/radial del eje)
 
 ---
 
@@ -148,6 +179,10 @@ Si la prueba del escape NO muestra mejora, las siguientes verificaciones son:
 - Conclusion: unica variable sin verificar = sistema de escape
 - Identificacion de catalizador (tacho corto antes del puente de la caja)
 - Programada prueba de escape para 2026-03-30
+- **Hallazgo tardio critico:** motor previo consumia 1L aceite/100km con humo blanco masivo
+- Esto contamino el catalizador con depositos de aceite quemado → causa raiz probable
+- **Hallazgo adicional:** PCM fue reparada + PATS eliminado post cortocircuito en BJB
+- Flash del PCM fue reprogramada → posible calibracion incorrecta (sospecha secundaria)
 
 ### 2026-03-30 — Prueba de Escape (PENDIENTE)
 - [ ] Resultado:

@@ -4,6 +4,30 @@
 
 Diagnostico por descarte sistematico: se verifico cada sistema del motor hasta aislar la causa raiz.
 
+## Fase 0: Antecedentes del Vehiculo (hallazgo tardio - critico)
+
+**Este dato se obtuvo avanzado el diagnostico y cambio el analisis completo.**
+
+### Estado previo del motor
+- Motor con aros desgastados: **consumo de aceite 1L cada 100 km**
+- **Humo blanco masivo** por escape durante meses/años de uso
+- El aceite quemado paso continuamente al sistema de escape
+
+### Cronologia de eventos
+1. Motor funcionando con aros gastados (humo blanco, consumo aceite) → **contamino el catalizador**
+2. **Reparacion del motor**: aros nuevos, tapa de cilindros reparada
+3. **Cortocircuito en la BJB** (fusiblera vano motor): daño electrico
+4. **Reparacion del PCM** + eliminacion del sistema PATS (inmovilizador)
+
+### Implicancias
+- El aceite quemado (1L/100km) genera depositos duros en el sustrato ceramico del catalizador
+- A diferencia del hollin de gasoil, los residuos de aceite NO se limpian con temperatura
+- El catalizador se fue tapando progresivamente durante toda la vida util del motor viejo
+- Al reconstruir el motor, el escape ya no genera humo pero el catalizador quedo obstruido
+- La reparacion del PCM + eliminacion PATS implica reflash completa del firmware → posible calibracion incorrecta (sospecha secundaria)
+
+---
+
 ## Fase 1: Identificacion del Sintoma
 
 **Sintoma reportado:** "No tiene la fuerza que deberia tener para acelerar"
@@ -149,6 +173,41 @@ El "tacho corto" ubicado antes del puente de la caja es el catalizador catalitic
 ### Estado
 **⏳ PENDIENTE — Prueba programada para 2026-03-30**
 
+### Causa raiz probable: aceite quemado del motor viejo
+
+El antecedente de **1L de aceite cada 100 km + humo blanco masivo** durante meses/años es la "pistola humeante". Ese aceite quemado se deposito dentro del catalizador formando una costra dura e irreversible que obstruye el paso de gases.
+
+Esto explica por que:
+- Se cambiaron sensores, bomba, filtros y nada mejoro → el problema nunca fue el motor
+- Todos los sistemas de entrada funcionan perfecto → el cuello de botella esta en la salida
+- Sin humo actual → no es exceso de combustible, es que el motor no puede exhalar
+- En vacio rinde bien (poco flujo de escape) pero bajo carga se ahoga (mucho flujo)
+
+---
+
+## Fase 8: PCM Reparada — Sospecha Secundaria
+
+### Hallazgo
+La PCM fue reparada y se elimino el sistema PATS (inmovilizador) despues de un cortocircuito en la BJB. Esto implica que la flash del PCM fue reprogramada.
+
+### Riesgo
+Si el tecnico que reparo la PCM uso un firmware generico, de otro modelo, o una calibracion incorrecta, los mapas de inyeccion (cantidad de combustible, presion de rail objetivo, limite de torque, smoke limiter) podrian estar mal. Esto limitaria la potencia por software.
+
+### Verificacion
+- Leer la flash del PCM con herramienta MPPS/KESSv2/KTag
+- Comparar calibracion contra archivo original de Ranger 2008 3.0 SID 901
+- Verificar mapas de IQ (injection quantity), torque limiter, smoke limiter, rail pressure target
+
+### Herramientas necesarias para reprogramacion DIY
+| Elemento | Precio aprox (USD) |
+|----------|-------------------|
+| MPPS v18/v21 (clon) | $50-80 |
+| WinOLS o ECM Titanium | $0-50 (community) |
+| Notebook con USB | Ya disponible |
+
+### Estado
+**⏳ PENDIENTE — A verificar solo si la prueba de escape no da resultado**
+
 ---
 
 ## Resumen del Descarte
@@ -170,5 +229,9 @@ Intercooler/mangueras      ──── ✅ Descartado (inflan correctamente)
 EGR                        ──── ✅ No aplica (este modelo no tiene)
 Electronica/DTCs           ──── ✅ Descartado (sin codigos relevantes)
                                     │
-ESCAPE (catalizador)       ──── ❓ PENDIENTE ← UNICA VARIABLE SIN VERIFICAR
+ESCAPE (catalizador)       ──── ❓ PENDIENTE ← SOSPECHA PRINCIPAL (confianza ALTA)
+                                    │         Causa: aceite quemado del motor viejo
+                                    │
+PCM (calibracion)          ──── ❓ PENDIENTE ← SOSPECHA SECUNDARIA
+                                              Causa: reflash por reparacion + eliminacion PATS
 ```

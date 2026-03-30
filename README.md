@@ -28,8 +28,19 @@ La camioneta **no tiene la fuerza que deberia** para acelerar. Especificamente:
 
 **Estimacion de perdida:** A 120 km/h en 5ta sin poder acelerar, el motor produce ~50 HP de los 163 nominales (~30% de capacidad).
 
-## Trabajos Realizados Previamente
+## Antecedentes Criticos
 
+### Estado previo del motor (ANTES de la reparacion)
+- **Consumo de aceite: 1 litro cada 100 km** (aros desgastados)
+- **Mucho humo blanco** por escape durante meses/años
+- El aceite quemado paso al sistema de escape durante todo ese periodo
+
+### Cronologia de reparaciones
+1. **Reparacion del motor**: cambio de aros y reparacion de tapa de cilindros
+2. **Cortocircuito en la BJB** (fusiblera del vano motor): daño electrico posterior
+3. **Reparacion del PCM**: se reparo el modulo y se elimino la seguridad PATS (inmovilizador)
+
+### Trabajos realizados
 - Motor completo: cambio de aros y reparacion de tapa de cilindros
 - Turbo reparado
 - Bomba de combustible de levante nueva
@@ -40,7 +51,38 @@ La camioneta **no tiene la fuerza que deberia** para acelerar. Especificamente:
 - Sensor T-MAP limpio
 - Embrague reparado (no patina)
 - Mangueras de intercooler verificadas (se inflan correctamente)
+- PCM reparada + eliminacion PATS (post cortocircuito BJB)
 - No hay fugas ni perdidas de liquidos
+
+## Hipotesis Principal: Catalizador Tapado por Aceite Quemado
+
+**Nivel de confianza: MUY ALTO**
+
+```
+Motor con aros gastados (consumo aceite 1L/100km)
+        |
+Humo blanco constante por escape durante meses/años
+        |
+Aceite quemado tapo el sustrato ceramico del catalizador
+        |
+Se reconstruyo el motor (aros nuevos, tapa reparada)
+        |
+Motor ahora perfecto, NO consume aceite ni larga humo
+        |
+PERO el catalizador quedo tapado por el daño del motor anterior
+        |
+Motor nuevo no puede evacuar gases → ~30% de potencia
+```
+
+**Evidencia que soporta esta hipotesis:**
+- El motor previo consumia 1L aceite/100km con humo blanco masivo → contamino el catalizador
+- Todos los sistemas de ENTRADA (aire, combustible, electronica) estan verificados y OK
+- Turbo genera 1.5 bar de boost (normal) y rail llega a 1400 bar (normal)
+- Sin humo actual = motor no puede quemar mas porque no puede exhalar
+- Sin DTCs de escape = la Ranger SID 901 NO tiene sensor de contrapresion de escape
+- En vacio llega a 4000 RPM (poco flujo) pero bajo carga solo 3500 RPM (mucho flujo, se ahoga)
+
+**Hipotesis secundaria:** PCM con calibracion incorrecta (por reparacion + eliminacion PATS). A verificar si la prueba de escape no da resultado.
 
 ## Valores Medidos con Scanner
 
