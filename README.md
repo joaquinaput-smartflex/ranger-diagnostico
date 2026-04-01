@@ -52,37 +52,49 @@ La camioneta **no tiene la fuerza que deberia** para acelerar. Especificamente:
 - Embrague reparado (no patina)
 - Mangueras de intercooler verificadas (se inflan correctamente)
 - PCM reparada + eliminacion PATS (post cortocircuito BJB)
+- Silenciador reemplazado (estaba tapado)
+- Precamara de salida del turbo anulada
+- Wastegate: regulada precarga, verificada mariposa libre, manguera y niple OK
 - No hay fugas ni perdidas de liquidos
 
-## Hipotesis Principal: Catalizador Tapado por Aceite Quemado
+### Incidente durante diagnostico (2026-04-01)
+- Paleta del ventilador se rompio durante acelerada en vacio a 4000 RPM
+- Daño colateral: radiador y encausador rotos
+- **Pendiente reemplazo:** radiador + encausador + viscoso + paletas (2026-04-02)
 
-**Nivel de confianza: MUY ALTO**
+## Hipotesis Principal: Wastegate No Abre — Causa Raiz Pendiente
+
+**Nivel de confianza: ALTO (wastegate confirmada como problema, causa raiz en investigacion)**
 
 ```
-Motor con aros gastados (consumo aceite 1L/100km)
+Wastegate no abre en operacion (todos los componentes OK individualmente)
         |
-Humo blanco constante por escape durante meses/años
+Posibles causas restantes:
+├── Resorte con constante incorrecta (turbo reconstruido, pieza de otro modelo)
+├── Turbo no genera suficiente boost real (daño interno, circulo vicioso con PCM)
+└── Bomba de inyeccion: presion rail 460 bar ralenti sin explicar (VCV/PCV spec?)
         |
-Aceite quemado tapo el sustrato ceramico del catalizador
-        |
-Se reconstruyo el motor (aros nuevos, tapa reparada)
-        |
-Motor ahora perfecto, NO consume aceite ni larga humo
-        |
-PERO el catalizador quedo tapado por el daño del motor anterior
-        |
-Motor nuevo no puede evacuar gases → ~30% de potencia
+Turbo sobrealimenta o PCM recorta por anomalias → ~30% de potencia
 ```
 
-**Evidencia que soporta esta hipotesis:**
-- El motor previo consumia 1L aceite/100km con humo blanco masivo → contamino el catalizador
-- Todos los sistemas de ENTRADA (aire, combustible, electronica) estan verificados y OK
-- Turbo genera 1.5 bar de boost (normal) y rail llega a 1400 bar (normal)
-- Sin humo actual = motor no puede quemar mas porque no puede exhalar
-- Sin DTCs de escape = la Ranger SID 901 NO tiene sensor de contrapresion de escape
-- En vacio llega a 4000 RPM (poco flujo) pero bajo carga solo 3500 RPM (mucho flujo, se ahoga)
+**Evidencia:**
+- Presion en mangueras de boost es excesiva (mucho mas de lo normal)
+- Wastegate probada con compresor de aire → costaba abrir, precarga muy alta
+- Se redujo precarga del resorte pero la valvula sigue sin abrir bajo operacion
+- Diafragma/pulmon del actuador funciona OK (probado con compresor)
+- Mariposa verificada: **se mueve libremente** con varilla desconectada → mecanismo OK
+- Rearmada con 3 vueltas de rosca de precarga
+- **No llega suficiente aire por la manguera al actuador** → causa raiz del no-apertura
+- Presion de rail alta en ralenti (460 bar) encaja con PCM compensando condiciones anormales
+- Sin DTCs = la SID 901 no tiene codigo especifico para sobrealimentacion (turbo no pilotado)
 
-**Hipotesis secundaria:** PCM con calibracion incorrecta (por reparacion + eliminacion PATS). A verificar si la prueba de escape no da resultado.
+**Resultado prueba de escape (2026-04-01):**
+- Silenciador estaba muy tapado → reemplazado
+- Precamara a la salida del turbo → anulada
+- Mejora leve pero insuficiente → escape no era la causa principal
+- Descubierta la wastegate trabada durante la inspeccion
+
+**Hipotesis secundaria:** PCM con calibracion incorrecta (por reparacion + eliminacion PATS). A verificar si la reparacion/reemplazo de wastegate no resuelve.
 
 ## Valores Medidos con Scanner
 
@@ -91,11 +103,14 @@ Motor nuevo no puede evacuar gases → ~30% de potencia
 | Presion rail ralenti | 460 bar | 250-350 bar | ⚠️ ALTA |
 | Presion rail 2000 RPM en ruta | 1100 bar | - | Normal (carga parcial) |
 | Presion rail maxima (plena carga) | 1400 bar | 1200-1600 bar | ✅ OK |
-| Boost turbo (sobrepresion) plena carga | 1.5 bar | 1.0-1.5 bar | ✅ OK |
+| Boost turbo (sobrepresion) plena carga | 1.5 bar (*) | 1.0-1.5 bar | ⚠️ Ver nota |
 | Correccion inyectores >2000 RPM | 0.980 | ~1.000 | ✅ OK |
 | RPM maxima en vacio | 4000 RPM | 4640 RPM (max libre) | ✅ Razonable |
 | RPM maxima 3ra a fondo | 3500 RPM | >4000 RPM | ⚠️ BAJA |
+| Wastegate | No abre | Debe abrir a ~0.8-1.0 bar | ❌ TRABADA |
 | DTCs | P0704 (sensor embrague) | - | No relevante |
+
+(*) El valor de 1.5 bar fue medido con el motor ya recortado por la PCM. Con wastegate trabada, la presion real sin recorte podria ser significativamente mayor.
 
 ## Documentacion de Referencia
 

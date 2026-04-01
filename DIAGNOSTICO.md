@@ -93,12 +93,15 @@ A 120 km/h en 5ta sin poder acelerar:
 ### 3.2 Turbocompresor
 | Parametro | Valor | Esperado | Estado |
 |-----------|-------|----------|--------|
-| Sobrepresion plena carga | 1.5 bar | 1.0-1.5 bar | ✅ NORMAL |
+| Sobrepresion plena carga | 1.5 bar (*) | 1.0-1.5 bar | ⚠️ Ver nota |
 | Entrada en boost | ~1600 RPM | ~1500-1800 RPM | ✅ NORMAL |
 | Silbido turbo | Se escucha | - | ✅ |
 | Tipo de turbo | Wastegate mecanica | - | Info |
+| **Wastegate** | **No abre** | Debe abrir a ~0.8-1.0 bar | **❌ TRABADA** |
 
-**Conclusion turbo:** Genera presion de boost correcta (1.5 bar). **Descartado.**
+(*) 1.5 bar fue medido con motor recortado por PCM. Sin recorte, la presion real seria mayor.
+
+**Conclusion turbo:** El compresor funciona correctamente pero la **wastegate esta trabada** (precarga excesiva, no es el diafragma). Sin wastegate funcional → sobrealimentacion → PCM recorta potencia. **CAUSA PRINCIPAL IDENTIFICADA (2026-04-01).**
 
 ### 3.3 Sensor T-MAP
 | Verificacion | Resultado |
@@ -137,51 +140,114 @@ A 120 km/h en 5ta sin poder acelerar:
 
 **Conclusion electronica:** Sin fallas. Descartado.
 
-## Fase 7: Sistema de Escape — PENDIENTE DE VERIFICACION
+## Fase 7: Sistema de Escape ✅ COMPLETADO (2026-04-01)
 
-### Por que el escape es la unica variable restante
+### Trabajos realizados
+- **Silenciador:** Estaba muy tapado → **reemplazado por silenciador nuevo**
+- **Precamara (salida del turbo):** **Anulada**
+- **Prueba de ruta post-reparacion:** Mejora leve pero insuficiente
 
-Todos los sistemas de ENTRADA (aire, combustible, electronica, mecanica) estan verificados y funcionan correctamente. El motor recibe:
-- ✅ Combustible suficiente (1400 bar rail)
-- ✅ Aire suficiente (1.5 bar boost)
-- ✅ Timing correcto (distribucion verificada)
-- ✅ Compresion (motor recien armado)
-- ❌ **NO se verifico la SALIDA de gases**
+### Resultado
+El escape contribuia parcialmente al problema (silenciador tapado) pero **no era la causa principal**. Despues de reemplazar silenciador y anular precamara, la falta de potencia persiste en ~80% de su severidad original.
 
-### Evidencia que apunta al escape
+### Conclusion
+Escape descartado como causa principal. La restriccion del silenciador sumaba al problema pero la causa raiz es otra → ver Fase 7B.
 
-1. **En vacio vs bajo carga:** Motor llega a 4000 RPM en vacio (poco flujo de escape) pero solo 3500 RPM en 3ra a fondo (mucho flujo). Un escape tapado restringe mas a mayor caudal de gases.
+---
 
-2. **Perdida progresiva con la marcha:** En marchas cortas la multiplicacion de la caja compensa, pero en 5ta la falta de torque se expone completamente.
+## Fase 7B: Wastegate del Turbo — CAUSA PRINCIPAL IDENTIFICADA (2026-04-01)
 
-3. **Sin humo:** El motor no puede quemar mas combustible porque no puede evacuar los gases quemados.
+### Descubrimiento
+Durante la inspeccion del sistema de escape se descubrio que la **valvula wastegate del turbo NO abre**. La presion en las mangueras de boost es excesiva.
 
-4. **Presion de ralenti alta (460 bar):** El PCM podria estar compensando la contrapresion de escape inyectando mas combustible para mantener el ralenti.
+### Pruebas realizadas
+| Prueba | Resultado |
+|--------|-----------|
+| Presion en mangueras de boost | Excesiva (mucho mas de lo normal) |
+| Wastegate con compresor de aire | Costaba abrir — precarga muy alta |
+| Regulacion de precarga del resorte | Reducida, pero sigue sin abrir en operacion |
+| Diafragma/pulmon del actuador | Funciona OK (descartado como causa) |
+| **Mariposa con varilla desconectada** | **Se mueve libremente** → mecanismo OK ✅ |
+| Rearmado con precarga | 3 vueltas de rosca |
+| **Aire en manguera al actuador** | **No llega suficiente presion** ← CAUSA RAIZ |
 
-5. **Sin DTCs:** La Ranger con SID 901 **NO tiene sensor de contrapresion de escape** ni sonda lambda post-catalizador, por lo que un catalizador tapado no genera codigo de error.
+### Analisis
 
-### Componentes del escape identificados
+**¿Por que la wastegate no abre? → No recibe señal de presion**
 
 ```
-[TURBO] → [Downpipe] → [TACHO CORTO = Catalizador] → [Caño] → [TACHO GRANDE = Silenciador] → [Salida]
-                                    ↑
-                            SOSPECHA PRINCIPAL
+Manguera de señal no entrega presion de boost al actuador
+        |
+Actuador wastegate nunca recibe la señal de "hay sobrePresion"
+        |
+Wastegate permanece cerrada → turbo sobrealimenta sin control
+        |
+T-MAP reporta sobrePresion a la PCM
+        |
+PCM aplica smoke limiter / torque limiter como proteccion
+        |
+Motor recortado por software → ~30% de potencia efectiva
 ```
 
-El "tacho corto" ubicado antes del puente de la caja es el catalizador catalitico. El "tacho grande" posterior es el silenciador.
+**Descarte progresivo de la wastegate:**
+1. ~~Mecanismo de la valvula trabado~~ → Mariposa se mueve libre ✅
+2. ~~Diafragma/pulmon roto~~ → Funciona con compresor ✅
+3. ~~Resorte con precarga excesiva~~ → Regulado, sigue sin abrir ✅
+4. **Manguera de señal / niple de toma → NO LLEGA PRESION** ← PENDIENTE
+
+**¿Por que no se detecto antes?**
+- La medicion de scanner mostro 1.5 bar de boost → parecia "normal"
+- Pero ese valor se midio con el motor YA recortado por la PCM
+- Sin el recorte de la PCM, la presion de boost seria mucho mayor (turbo sin freno)
+- La SID 901 no tiene DTC especifico para sobrealimentacion (turbo no pilotado electronicamente)
+
+### Verificacion adicional (2026-04-01)
+
+| Prueba | Resultado |
+|--------|-----------|
+| Aire comprimido por niple de toma | ✅ Fluye correctamente |
+| Manguera de señal | ✅ Sin obstruccion |
+
+**Todos los componentes individuales de la wastegate verificados OK.** Sin embargo, la wastegate sigue sin abrir en operacion. Esto sugiere que el problema puede ser:
+
+1. **Resorte del actuador con constante incorrecta** — instalado durante la reparacion del turbo, de otro modelo con mayor resistencia. Aunque la precarga se regulo, la fuerza necesaria para comprimir el resorte supera la presion de boost disponible.
+
+2. **Presion de boost real menor a la esperada** — los 1.5 bar medidos por scanner son con motor recortado por PCM. Menos combustible → menos gases → menos velocidad de turbina → menos boost → wastegate no abre. Circulo vicioso.
+
+3. **Turbo con problemas internos** — juego excesivo en rodamientos, rueda dañada, sellos con fuga → no genera presion suficiente para abrir la wastegate.
 
 ### Estado
-**⏳ PENDIENTE — Prueba programada para 2026-03-30**
+**⏳ PENDIENTE — Verificar turbo internamente, bomba de inyeccion y datos de scanner**
 
-### Causa raiz probable: aceite quemado del motor viejo
+---
 
-El antecedente de **1L de aceite cada 100 km + humo blanco masivo** durante meses/años es la "pistola humeante". Ese aceite quemado se deposito dentro del catalizador formando una costra dura e irreversible que obstruye el paso de gases.
+## Fase 7C: Bomba de Inyeccion — Anomalia de Presion de Rail (2026-04-01)
 
-Esto explica por que:
-- Se cambiaron sensores, bomba, filtros y nada mejoro → el problema nunca fue el motor
-- Todos los sistemas de entrada funcionan perfecto → el cuello de botella esta en la salida
-- Sin humo actual → no es exceso de combustible, es que el motor no puede exhalar
-- En vacio rinde bien (poco flujo de escape) pero bajo carga se ahoga (mucho flujo)
+### Anomalia no resuelta
+La presion de rail en ralenti de **460 bar** (esperado 250-350) nunca fue explicada satisfactoriamente. Los sensores VCV y PCV son nuevos, pero:
+
+- ¿Son del numero de parte correcto para Ranger 2008 3.0L SID 901?
+- ¿La PCM esta COMANDANDO 460 bar (calibracion) o la bomba esta forzando esa presion?
+
+### Importancia
+Si la PCM esta compensando una condicion anormal, la presion alta de rail puede ser un **sintoma** de otro problema (ej: sobreboost, sensor incorrecto). Pero si la bomba/PCV son de spec incorrecta, la presion alta de rail seria una **causa** adicional de mal funcionamiento.
+
+### Verificacion critica con scanner
+Leer **presion de rail DESEADA vs REAL** en ralenti:
+- Si deseada ≈ real ≈ 460 bar → PCM lo comanda asi (problema de calibracion o compensacion)
+- Si deseada ≈ 300 bar y real ≈ 460 bar → PCV no alivia o VCV deja pasar demasiado
+
+## Fase 7D: Inyectores — Evaluacion (2026-04-01)
+
+### Observaciones
+- Inyectores algo ruidosos
+- Correccion se estabiliza en 0.980 apenas suben RPM
+- Tipo: piezoelectricos
+
+### Evaluacion
+La correccion de 0.98 es aceptable (rango normal 0.95-1.05). El ruido en inyectores piezoelectricos puede ser normal si es **parejo** entre los 4 cilindros. Si un inyector suena marcadamente distinto, podria tener fuga interna.
+
+**Prioridad:** BAJA — los inyectores son improbables como causa principal dado que la correccion es estable.
 
 ---
 
@@ -206,7 +272,7 @@ Si el tecnico que reparo la PCM uso un firmware generico, de otro modelo, o una 
 | Notebook con USB | Ya disponible |
 
 ### Estado
-**⏳ PENDIENTE — A verificar solo si la prueba de escape no da resultado**
+**⏳ PENDIENTE — A verificar solo si la reparacion/reemplazo de wastegate no resuelve**
 
 ---
 
@@ -221,16 +287,29 @@ Sensor FRP                 ──── ✅ Descartado (nuevo)
 Presion de rail            ──── ✅ Descartado (1400 bar a plena carga)
 Inyectores                 ──── ✅ Descartado (correccion ~1.0)
 Filtro de aire             ──── ✅ Descartado (nuevo)
-Turbo                      ──── ✅ Descartado (1.5 bar boost = normal)
+Turbo (compresion)         ──── ✅ Descartado (genera boost correctamente)
 T-MAP                      ──── ✅ Descartado (limpio, sin DTCs)
 Distribucion               ──── ✅ Descartado (verificada)
 Embrague                   ──── ✅ Descartado (reparado, no patina)
 Intercooler/mangueras      ──── ✅ Descartado (inflan correctamente)
 EGR                        ──── ✅ No aplica (este modelo no tiene)
 Electronica/DTCs           ──── ✅ Descartado (sin codigos relevantes)
+Silenciador                ──── ✅ Tapado → REEMPLAZADO (mejora leve)
+Precamara turbo            ──── ✅ ANULADA (mejora leve)
                                     │
-ESCAPE (catalizador)       ──── ❓ PENDIENTE ← SOSPECHA PRINCIPAL (confianza ALTA)
-                                    │         Causa: aceite quemado del motor viejo
+WASTEGATE TURBO            ──── ❌ NO ABRE (todos los componentes verificados OK individualmente)
+  Actuador                 ────── ✅ Funciona OK (probado con compresor)
+  Mariposa                 ────── ✅ Se mueve libre (verificada a mano)
+  Manguera señal           ────── ✅ Fluye correctamente
+  Niple de toma            ────── ✅ Fluye correctamente
+  Resorte                  ────── ❓ ¿Constante correcta? (¿pieza del turbo reconstruido?)
+                                    │
+TURBO (estado interno)     ──── ❓ PENDIENTE ← verificar juego, ruedas, sellos
+BOMBA INYECCION (VCV/PCV)  ──── ❓ PENDIENTE ← rail 460 bar en ralenti sin explicar
+                                    │         ¿Numero de parte correcto?
+                                    │         ¿PCM comanda o bomba fuerza?
+Inyectores                 ──── ✅ Probablemente OK (correccion 0.98, ruido parejo)
+                                    │
                                     │
 PCM (calibracion)          ──── ❓ PENDIENTE ← SOSPECHA SECUNDARIA
                                               Causa: reflash por reparacion + eliminacion PATS

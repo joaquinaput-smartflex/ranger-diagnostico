@@ -3,11 +3,11 @@
 ## Estado General
 
 ```
-[██████████████████░░] 90% — Pendiente: prueba de escape
+[██████████████████░░] 90% — Pendiente: reparar/reemplazar wastegate
 ```
 
 **Fecha inicio diagnostico:** 2026-03-29
-**Proxima prueba programada:** 2026-03-30
+**Ultimo hallazgo:** 2026-04-01 — Wastegate trabada (causa principal actualizada)
 
 ---
 
@@ -59,13 +59,17 @@
 
 **Resultado:** Admision de aire OK.
 
-## Paso 6: Verificacion de Turbo ✅
+## Paso 6: Verificacion de Turbo ⚠️ WASTEGATE TRABADA
 - [x] Silbido del turbo (se escucha)
 - [x] RPM de entrada en boost: ~1600 RPM (normal)
-- [x] Presion de boost a plena carga: 1.5 bar de sobrepresion (NORMAL)
+- [x] Presion de boost a plena carga: 1.5 bar de sobrepresion (medido con motor recortado)
 - [x] Tipo de turbo confirmado: wastegate mecanica, no pilotado
+- [x] **Wastegate NO abre** — presion en mangueras excesiva
+- [x] Probada con compresor de aire — precarga excesiva del resorte
+- [x] Regulada para reducir precarga — sigue sin abrir
+- [x] Diafragma/pulmon del actuador funciona OK (descartado)
 
-**Resultado:** Turbo funciona correctamente. 1.5 bar de boost es valor nominal.
+**Resultado:** Turbo comprime correctamente pero la wastegate esta trabada. No hay control de presion maxima de boost. La PCM recorta potencia como proteccion.
 
 ## Paso 7: Verificacion de Distribucion ✅
 - [x] Marcas de puesta a punto ciguenal/arbol de levas (correctas)
@@ -78,55 +82,130 @@
 
 **Resultado:** Transmision OK.
 
-## Paso 9: Verificacion de Sistema de Escape ⏳ PENDIENTE
-- [ ] **Identificar componentes del escape** ✅ (2 tachos: catalizador + silenciador)
-- [ ] **PRUEBA: Desconectar escape antes del catalizador**
-- [ ] Probar camioneta con escape libre
-- [ ] Evaluar resultado
+## Paso 9: Verificacion de Sistema de Escape ✅ COMPLETADO
+- [x] Identificar componentes del escape (2 tachos: catalizador + silenciador)
+- [x] Silenciador tapado → **reemplazado por silenciador nuevo**
+- [x] Precamara a la salida del turbo → **anulada**
+- [x] Prueba de ruta post-reparacion
 
-### Procedimiento para la prueba de escape
+**Resultado:** Mejora leve pero insuficiente. El escape estaba parcialmente obstruido (silenciador tapado) pero **no era la causa principal**. Durante esta inspeccion se descubrio que la wastegate del turbo no abre → ver Paso 6 actualizado.
 
-**Herramientas necesarias:**
-- Llave de boca/tubo (tamaño segun bulones de la brida, tipicamente 13mm o 15mm)
-- WD-40 o similar (aplicar la noche anterior a los bulones)
-- Proteccion auditiva (va a hacer mucho ruido)
+## Paso 9B: Circuito de Señal Wastegate ✅ PARCIALMENTE DESCARTADO
 
-**Pasos:**
-1. **Preparacion (noche anterior):**
-   - Rociar WD-40 generosamente en los bulones/abrazadera de la union entre downpipe del turbo y catalizador
-   - Dejar actuar toda la noche
+### Diagnostico completo de la wastegate
+| Componente | Prueba | Resultado |
+|------------|--------|-----------|
+| Mariposa | Varilla desconectada, movimiento manual | ✅ Se mueve libremente |
+| Diafragma/pulmon | Probado con compresor | ✅ Funciona OK |
+| Precarga resorte | Reducida, regulada 3 vueltas | ✅ Ajustada |
+| Manguera de señal | Verificada flujo | ✅ Fluye correctamente |
+| Niple de toma | Aire comprimido por niple | ✅ Fluye correctamente |
 
-2. **Desconexion:**
-   - Motor FRIO (importante: el escape se calienta mucho)
-   - Ubicar la brida/union entre la bajada del turbo y el catalizador (tacho corto)
-   - Aflojar los bulones o la abrazadera
-   - No es necesario sacarlos del todo, solo separar lo suficiente para que los gases salgan
+**Resultado:** Todos los componentes del circuito de señal de wastegate verificados individualmente y funcionan. Sin embargo, **la wastegate sigue sin abrir en operacion**.
 
-3. **Prueba de ruta:**
-   - ⚠️ Usar proteccion auditiva — el ruido sera muy fuerte
-   - ⚠️ Probar en zona sin vecinos
-   - Hacer la misma prueba que siempre: salir en 1ra, subir marchas, llegar a 5ta
-   - **Prestar atencion a:**
-     - ¿La salida en 1ra es mas rapida?
-     - ¿El motor sube mas de RPM bajo carga?
-     - ¿En 5ta supera los 120 km/h?
-     - ¿Cuantas RPM maximas alcanza en 3ra a fondo?
+### Sospechas restantes sobre la wastegate
 
-4. **Evaluacion:**
+**1. Resorte con constante incorrecta (del turbo reconstruido)**
+- Si durante la reparacion del turbo se instalo un resorte de otro modelo (mayor constante), aunque la precarga sea correcta, la fuerza necesaria para abrir podria ser mayor que la presion de boost disponible
+- Verificar: ¿el taller de turbo uso repuestos originales o genericos?
 
-   **SI MEJORA NOTABLEMENTE:**
-   - Catalizador tapado CONFIRMADO
-   - Solucion: reemplazar catalizador o vaciarlo (eliminar el sustrato interno)
-   - Opcion: instalar un caño recto en lugar del catalizador
+**2. Presion de boost real insuficiente para abrir**
+- Los 1.5 bar medidos por scanner son la lectura del T-MAP con motor recortado
+- Si la PCM esta limitando combustible (smoke/torque limiter), el motor genera menos gases → menos velocidad de turbina → menos boost real
+- Es un circulo vicioso: PCM recorta → menos boost → wastegate no abre → PCM sigue recortando
 
-   **SI NO MEJORA:**
-   - Repetir la prueba desconectando DESPUES del silenciador (tacho grande)
-   - Si con silenciador desconectado tampoco mejora → escape descartado
-   - Ir a Paso 10 (diagnostico alternativo)
+**3. Turbo con daño interno (ver Paso 9C)**
 
-5. **Reconexion:**
-   - Volver a ajustar los bulones/abrazadera
-   - Verificar que no haya fugas audibles en ralenti
+## Paso 9C: Verificacion del Turbo — Estado Interno ⏳ PENDIENTE
+
+El turbo fue reparado pero podria tener problemas internos que limitan su capacidad de generar boost.
+
+### Verificaciones pendientes
+
+**1. Juego axial y radial del eje**
+- [ ] Sacar cañerias de admision y escape del turbo
+- [ ] Mover el eje del turbo axialmente (adelante/atras): debe tener juego minimo (<0.05mm)
+- [ ] Mover el eje radialmente (arriba/abajo): debe tener juego minimo (<0.10mm)
+- [ ] Si hay juego excesivo → rodamientos/bujes gastados → turbo no sella, pierde eficiencia
+
+**2. Estado del compresor (lado frio)**
+- [ ] Inspeccionar visualmente la rueda del compresor
+- [ ] Verificar que no tenga alabes dañados, desgastados o con depositos
+- [ ] Verificar que no roce contra la carcasa (marcas de contacto)
+
+**3. Estado de la turbina (lado caliente)**
+- [ ] Inspeccionar la rueda de turbina
+- [ ] Verificar alabes (erosion por aceite quemado del motor viejo)
+- [ ] Verificar que no haya depositos de carbon que reduzcan la eficiencia
+
+**4. Sellos de aceite del turbo**
+- [ ] Verificar que no haya aceite en la carcasa del compresor (sello lado frio)
+- [ ] Verificar que no haya aceite en la carcasa de turbina (sello lado caliente)
+- [ ] Fugas de aceite = perdida de eficiencia + contamina intercooler
+
+## Paso 9D: Bomba de Inyeccion y Alta Presion ⏳ PENDIENTE
+
+La presion de rail en ralenti de **460 bar (normal: 250-350)** es una anomalia no resuelta. VCV y PCV son nuevos pero podrian ser de especificacion incorrecta.
+
+### Anomalia de presion de rail en ralenti
+
+| Parametro | Valor medido | Valor esperado | Diferencia |
+|-----------|-------------|----------------|------------|
+| Rail ralenti | 460 bar | 250-350 bar | **+30-80% sobre normal** |
+
+### Posibles causas
+
+**1. VCV (Volume Control Valve) de especificacion incorrecta**
+- La VCV controla cuanto combustible ENTRA a la bomba de alta presion
+- Normal Cerrada, resistencia 2-3 Ohm (tipica 2.75 Ohm)
+- [ ] Verificar numero de parte de la VCV instalada vs original Ranger 2008 3.0L SID 901
+- [ ] Medir resistencia de la VCV: debe ser 2-3 Ohm
+- [ ] Si es de otro modelo → diferente caudal → presion alterada
+
+**2. PCV (Pressure Control Valve) de especificacion incorrecta**
+- La PCV controla cuanta presion se LIBERA del rail (valvula de alivio)
+- Normal Abierta, resistencia 2.8-4 Ohm (tipica 3 Ohm)
+- [ ] Verificar numero de parte de la PCV instalada vs original
+- [ ] Medir resistencia de la PCV: debe ser 2.8-4 Ohm
+- [ ] Si la PCV no alivia lo suficiente → presion de rail excesiva
+
+**3. PCM comandando presion alta (compensacion)**
+- [ ] Leer con scanner "Presion de rail DESEADA" vs "Presion de rail REAL" en ralenti
+- [ ] Si deseada = real = 460 bar → la PCM QUIERE esa presion (calibracion incorrecta o compensacion)
+- [ ] Si deseada = 300 bar y real = 460 bar → la bomba/PCV no responden correctamente
+
+### Verificacion con scanner (critica)
+- [ ] Presion rail deseada vs real en ralenti
+- [ ] Presion rail deseada vs real a 2000 RPM sin carga
+- [ ] Presion rail deseada vs real a fondo en 3ra
+- [ ] "Cantidad de inyeccion deseada" vs "real" (mg/inyeccion) a fondo
+- [ ] "Limitador de humo" (smoke limiter) — valor en mg/inj a plena carga
+- [ ] Posicion del acelerador: ¿llega a 100%?
+
+## Paso 9E: Inyectores — Evaluacion Detallada ⏳ PENDIENTE (baja prioridad)
+
+### Estado actual
+- Correccion >2000 RPM: 0.980 (normal, rango aceptable 0.95-1.05)
+- Inyectores ruidosos (pero corrección estable)
+- Tipo: piezoelectricos
+
+### Evaluacion
+| Parametro | Valor | Estado |
+|-----------|-------|--------|
+| Correccion >2000 RPM | 0.980 | ✅ Normal |
+| Ruido | Algo ruidosos | ⚠️ Puede ser normal en piezoelectricos |
+| Retorno individual | No medido | ⏳ Pendiente si otros pasos no resuelven |
+
+**Nota:** El ruido en inyectores piezoelectricos puede ser normal si es **parejo entre los 4**. Si uno suena marcadamente distinto → posible fuga interna en ese inyector. La correccion de 0.98 estable indica que la PCM no necesita compensar mucho, lo cual es buena señal.
+
+- [ ] *(Solo si otros pasos no resuelven)* Medir retorno individual de cada inyector en ralenti (1 minuto, comparar volumen)
+
+### Prueba de verificacion post-reparacion (aplica a todos los pasos 9B-9E)
+1. Motor en ralenti: verificar que boost sea ~0 bar (sin carga)
+2. Acelerar a fondo en 3ra: boost debe subir a 1.0-1.5 bar y **estabilizarse** (wastegate abre)
+3. En 5ta: debe superar 120 km/h con margen
+4. RPM maxima en 3ra a fondo: debe superar 4000 RPM
+5. Verificar presion de rail ralenti: debe bajar a 250-350 bar (PCM deja de compensar)
 
 ## Paso 10: Verificacion de Calibracion PCM (si escape no da resultado)
 
@@ -184,11 +263,24 @@ Si ninguna de las dos sospechas principales se confirma:
 - **Hallazgo adicional:** PCM fue reparada + PATS eliminado post cortocircuito en BJB
 - Flash del PCM fue reprogramada → posible calibracion incorrecta (sospecha secundaria)
 
-### 2026-03-30 — Prueba de Escape (PENDIENTE)
-- [ ] Resultado:
-- [ ] Observaciones:
-- [ ] Conclusion:
-- [ ] Siguiente paso:
+### 2026-04-01 — Prueba de Escape + Wastegate + Rotura Ventilador
+- [x] **Resultado escape:** Silenciador muy tapado → reemplazado. Precamara anulada.
+- [x] **Mejora:** Leve, insuficiente. Escape no era la causa principal.
+- [x] **Descubrimiento critico:** Wastegate del turbo NO abre
+  - Presion en mangueras de boost excesiva
+  - Probada con compresor → precarga del resorte muy alta, costaba abrir
+  - Regulada para reducir precarga → sigue sin abrir en operacion
+  - Diafragma/pulmon del actuador funciona OK
+  - Varilla desconectada: mariposa se mueve libremente → mecanismo OK
+  - Rearmada con 3 vueltas de rosca de precarga
+  - **No llega suficiente aire por la manguera al actuador** ← causa raiz
+- [x] **Conclusion:** El circuito de señal de presion al actuador de la wastegate esta fallando (manguera tapada/pinchada o niple obstruido). Sin señal de presion, el actuador no abre la wastegate, el turbo sobrealimenta y la PCM recorta potencia.
+- [x] **Siguiente paso:** Inspeccionar manguera de señal y niple de toma de presion (Paso 9B)
+- [x] **Niple de toma:** probado con aire comprimido → fluye correctamente
+- [x] **Manguera de señal:** verificada → fluye correctamente
+- [x] **INCIDENTE:** Durante acelerada en vacio a 4000 RPM con wastegate desacoplada, se rompio paleta del ventilador → daño a radiador + encausador
+  - Repuestos necesarios: radiador, encausador, viscoso + paletas
+  - Programado reemplazo: 2026-04-02
 
 ---
 
