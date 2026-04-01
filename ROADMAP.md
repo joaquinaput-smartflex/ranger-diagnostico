@@ -3,11 +3,12 @@
 ## Estado General
 
 ```
-[██████████████████░░] 90% — Pendiente: reparar/reemplazar wastegate
+[██████████████████░░] 90% — En curso: reparacion profesional del turbo
 ```
 
 **Fecha inicio diagnostico:** 2026-03-29
-**Ultimo hallazgo:** 2026-04-01 — Wastegate trabada (causa principal actualizada)
+**Ultimo hallazgo:** 2026-04-01 — Wastegate no abre (componentes OK, sospecha resorte incorrecto)
+**Proximo paso:** 2026-04-02 — Reemplazo radiador/viscoso + desmontaje turbo para taller
 
 ---
 
@@ -116,32 +117,38 @@
 
 **3. Turbo con daño interno (ver Paso 9C)**
 
-## Paso 9C: Verificacion del Turbo — Estado Interno ⏳ PENDIENTE
+## Paso 9C: Reparacion Profesional del Turbo ⏳ EN CURSO
 
-El turbo fue reparado pero podria tener problemas internos que limitan su capacidad de generar boost.
+**Decision (2026-04-01):** Llevar el turbo a un taller especializado para reparacion profesional. Se descarto comprar un turbo generico/chino — mejor invertir en reparar el actual con repuestos correctos.
 
-### Verificaciones pendientes
+### Plan
+1. [x] Reemplazo radiador + encausador + viscoso + paletas (2026-04-02)
+2. [ ] Desmontar turbo del vehiculo (2026-04-02)
+3. [ ] Llevar a taller de turbocompresores
+4. [ ] Solicitar al taller:
+   - Verificar juego axial y radial del eje
+   - Inspeccionar ruedas de compresor y turbina (depositos de aceite carbonizado)
+   - Verificar sellos de aceite (lado frio y caliente)
+   - Verificar estado de carcasas (roce, grietas)
+   - **CRITICO: Verificar/reemplazar resorte de wastegate con spec correcta para Ranger 3.0 NGD**
+   - Confirmar presion de apertura de wastegate: debe ser **~0.7-1.0 bar**
+   - Verificar largo correcto de varilla del actuador
+5. [ ] Retirar turbo reparado
+6. [ ] Montar turbo + prueba de ruta
 
-**1. Juego axial y radial del eje**
-- [ ] Sacar cañerias de admision y escape del turbo
-- [ ] Mover el eje del turbo axialmente (adelante/atras): debe tener juego minimo (<0.05mm)
-- [ ] Mover el eje radialmente (arriba/abajo): debe tener juego minimo (<0.10mm)
-- [ ] Si hay juego excesivo → rodamientos/bujes gastados → turbo no sella, pierde eficiencia
+### Puntos importantes para el taller
+- Informar que la wastegate **no abria** a pesar de que mariposa, actuador y manguera funcionan OK individualmente
+- El turbo fue reparado anteriormente — preguntar si el resorte instalado es el correcto
+- Antecedente: motor viejo consumia 1L aceite/100km → posibles depositos internos en turbina
+- Modelo turbo: **GT25 / GT20** — Part# **754743-0001 / 754743-0002**
 
-**2. Estado del compresor (lado frio)**
-- [ ] Inspeccionar visualmente la rueda del compresor
-- [ ] Verificar que no tenga alabes dañados, desgastados o con depositos
-- [ ] Verificar que no roce contra la carcasa (marcas de contacto)
-
-**3. Estado de la turbina (lado caliente)**
-- [ ] Inspeccionar la rueda de turbina
-- [ ] Verificar alabes (erosion por aceite quemado del motor viejo)
-- [ ] Verificar que no haya depositos de carbon que reduzcan la eficiencia
-
-**4. Sellos de aceite del turbo**
-- [ ] Verificar que no haya aceite en la carcasa del compresor (sello lado frio)
-- [ ] Verificar que no haya aceite en la carcasa de turbina (sello lado caliente)
-- [ ] Fugas de aceite = perdida de eficiencia + contamina intercooler
+### Alternativa evaluada y descartada
+Se evaluaron turbos nuevos en MercadoLibre ($147K-$1.3M ARS):
+- Garrett genuino: $1.3M (fuera de presupuesto)
+- Master Power: ~$870K (fuera de presupuesto)
+- Mahle: consultar (probablemente fuera de presupuesto)
+- Genericos/chinos: $150K-$400K — **descartados por calidad de balanceo y durabilidad**
+- **Presupuesto disponible: $380.000** → se opto por reparacion profesional del turbo actual
 
 ## Paso 9D: Bomba de Inyeccion y Alta Presion ⏳ PENDIENTE
 
